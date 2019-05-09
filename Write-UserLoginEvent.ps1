@@ -37,7 +37,7 @@ foreach ($curEvent in $allEvents){
                     Add-Member -InputObject $curObj -MemberType NoteProperty -Name Action -Value "Locked"
                     Add-Member -InputObject $curObj -MemberType NoteProperty -Name MachineName -Value $curEvent.MachineName 
                     Add-Member -InputObject $curObj -MemberType NoteProperty -Name UserName -Value ((($curEvent.Message).Split([Environment]::NewLine)[8]).split(":")[1]).Trim()
-                    #Add-Member -InputObject $curObj -MemberType NoteProperty -Name LoginID -Value ((($curEvent.Message).Split([Environment]::NewLine)[12]).split(":")[1]).Trim()
+                    Add-Member -InputObject $curObj -MemberType NoteProperty -Name LoginID -Value ((($curEvent.Message).Split([Environment]::NewLine)[12]).split(":")[1]).Trim()
                     Add-Member -InputObject $curObj -MemberType NoteProperty -Name SourceIP -Value ""
                     Add-Member -InputObject $curObj -MemberType NoteProperty -Name EventID -Value $curEvent.Id
                 }
