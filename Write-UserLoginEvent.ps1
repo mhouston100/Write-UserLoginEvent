@@ -8,7 +8,7 @@ foreach ($curEvent in $allEvents){
     $curObj = $null
     switch ($curEvent.ID) {
         4624    { $curObj = New-Object -TypeName PSObject
-                    Add-Member -InputObject $curObj -MemberType NoteProperty -Name TimeCreated -Value ([datetime]$curEvent.TimeCreated)
+                    Add-Member -InputObject $curObj -MemberType NoteProperty -Name TimeCreated -Value ("{0:yyyy-MM-dd HH:mm:ss}" -f ([datetime]$curEvent.TimeCreated))
                     Add-Member -InputObject $curObj -MemberType NoteProperty -Name Action -Value $curEvent.TaskDisplayName
                     Add-Member -InputObject $curObj -MemberType NoteProperty -Name MachineName -Value $curEvent.MachineName 
                     Add-Member -InputObject $curObj -MemberType NoteProperty -Name UserName -Value ((($curEvent.Message).Split([Environment]::NewLine)[36]).split(":")[1]).Trim()
@@ -52,6 +52,24 @@ foreach ($curEvent in $allEvents){
     }
     $outEvents += $curObj
 }
+$outEvents
 
-$dataTable = Out-DataTable $outEvents
+$connectionString = "Data Source=SQL-PRD-V05;Integrated Security=true;Initial Catalog=WindowsEventLogs;"
+$bulkCopy = new-object ("Data.SqlClient.SqlBulkCopy") $connectionString
+$bulkCopy.DestinationTableName = "UserLoginEvents"
+$dt = New-Object "System.Data.DataTable"
+ 
+# build the datatable
+$cols = $outEvents | Select-Object -first 1 | get-member -MemberType NoteProperty | Select-Object -Expand Name
 
+foreach ($col in $cols)  {$null = $dt.Columns.Add($col)}
+  
+foreach ($event in $outEvents)
+  {
+     $row = $dt.NewRow()
+     foreach ($col in $cols) { $row.Item($col) = $event.$col }
+     $dt.Rows.Add($row)
+  }
+  
+ # Write to the database!
+ $bulkCopy.WriteToServer($dt)
