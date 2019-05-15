@@ -57,10 +57,10 @@ v1.7 - Chad Miller - Fixed issue with IsArray
 .LINK 
 http://thepowershellguy.com/blogs/posh/archive/2007/01/21/powershell-gui-scripblock-monitor-script.aspx 
 #> 
-function Out-DataTable
+function Out-DataTable 
 { 
     [CmdletBinding()] 
-    param([Parameter(Position=0, Mandatory=$true, ValueFromPipeline = $true)] $InputObject) 
+    param([Parameter(Position=0, Mandatory=$true, ValueFromPipeline = $true)] [PSObject[]]$InputObject) 
  
     Begin 
     { 
@@ -69,7 +69,6 @@ function Out-DataTable
     } 
     Process 
     { 
-        $InputObject
         foreach ($object in $InputObject) 
         { 
             $DR = $DT.NewRow()   
@@ -105,5 +104,3 @@ function Out-DataTable
     } 
  
 } #Out-DataTable
-
-Export-ModuleMember -Function 'Out-DataTable'
