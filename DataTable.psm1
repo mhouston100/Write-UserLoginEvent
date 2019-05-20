@@ -147,3 +147,5 @@ function Write-DataTable
     } 
  
 } #Write-DataTable
+
+Export-ModuleMember -Function Out-DataTable, Write-DataTable
